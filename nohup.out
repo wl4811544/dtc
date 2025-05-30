@@ -1,0 +1,116 @@
+✓ Baseline model found: output/baseline/model-048-0.7410.pt
+Configuration:
+  dataset: assist17
+  data_dir: data
+  output_dir: output/assist17_20250527_003755
+  device: cuda
+  config: None
+  with_pid: True
+  batch_size: 16
+  test_batch_size: 32
+  d_model: 128
+  n_heads: 8
+  n_know: 32
+  n_layers: 3
+  dropout: 0.2
+  lambda_cl: 0.1
+  proj: True
+  hard_neg: False
+  window: 1
+  detector_d_model: 128
+  detector_n_heads: 8
+  detector_n_layers: 2
+  detector_dropout: 0.1
+  window_size: 10
+  anomaly_ratio: 0.1
+  optimize_for: f1_score
+  kt_epochs: 100
+  detector_epochs: 30
+  learning_rate: 0.001
+  detector_lr: 0.001
+  patience: 10
+  detector_patience: 10
+  use_cl: True
+  anomaly_weight: 0.5
+  skip_baseline: True
+  skip_detector: False
+  baseline_path: output/baseline/model-048-0.7410.pt
+  detector_path: None
+Using existing baseline model: output/baseline/model-048-0.7410.pt
+
+============================================================
+PHASE 2: Training Anomaly Detector
+============================================================
+
+Epoch 1/30
+Training:   0%|          | 0/4439 [00:00<?, ?it/s]Training:   0%|          | 1/4439 [00:02<2:54:06,  2.35s/it]Training:   0%|          | 2/4439 [00:04<2:24:08,  1.95s/it]Training:   0%|          | 3/4439 [00:05<2:15:54,  1.84s/it]Training:   0%|          | 4/4439 [00:07<2:06:07,  1.71s/it]Training:   0%|          | 5/4439 [00:08<2:02:41,  1.66s/it]Training:   0%|          | 6/4439 [00:10<1:59:55,  1.62s/it]Training:   0%|          | 7/4439 [00:11<1:53:49,  1.54s/it]Training:   0%|          | 8/4439 [00:13<1:57:01,  1.58s/it]Training:   0%|          | 9/4439 [00:15<1:57:44,  1.59s/it]Training:   0%|          | 10/4439 [00:16<1:57:11,  1.59s/it]Training:   0%|          | 11/4439 [00:18<1:54:34,  1.55s/it]Training:   0%|          | 12/4439 [00:19<1:53:28,  1.54s/it]Training:   0%|          | 13/4439 [00:21<1:54:56,  1.56s/it]Training:   0%|          | 14/4439 [00:22<1:52:02,  1.52s/it]Training:   0%|          | 15/4439 [00:24<1:51:28,  1.51s/it]Training:   0%|          | 16/4439 [00:25<1:55:28,  1.57s/it]Training:   0%|          | 17/4439 [00:27<1:49:57,  1.49s/it]Training:   0%|          | 18/4439 [00:28<1:53:09,  1.54s/it]Training:   0%|          | 19/4439 [00:30<1:52:35,  1.53s/it]Training:   0%|          | 20/4439 [00:31<1:50:28,  1.50s/it]Training:   0%|          | 21/4439 [00:33<1:52:19,  1.53s/it]Training:   0%|          | 22/4439 [00:34<1:52:07,  1.52s/it]Training:   1%|          | 23/4439 [00:36<1:54:56,  1.56s/it]Training:   1%|          | 24/4439 [00:37<1:53:07,  1.54s/it]Training:   1%|          | 25/4439 [00:39<1:50:02,  1.50s/it]Training:   1%|          | 26/4439 [00:40<1:51:18,  1.51s/it]Training:   1%|          | 27/4439 [00:42<1:54:50,  1.56s/it]Training:   1%|          | 28/4439 [00:44<1:52:25,  1.53s/it]Training:   1%|          | 29/4439 [00:45<1:49:25,  1.49s/it]Training:   1%|          | 30/4439 [00:46<1:47:30,  1.46s/it]Training:   1%|          | 31/4439 [00:48<1:45:29,  1.44s/it]Training:   1%|          | 32/4439 [00:49<1:46:24,  1.45s/it]Training:   1%|          | 33/4439 [00:51<1:46:05,  1.44s/it]Training:   1%|          | 34/4439 [00:52<1:46:14,  1.45s/it]Training:   1%|          | 35/4439 [00:54<1:46:28,  1.45s/it]Training:   1%|          | 36/4439 [00:55<1:46:39,  1.45s/it]Training:   1%|          | 37/4439 [00:57<1:51:55,  1.53s/it]Training:   1%|          | 38/4439 [00:58<1:53:17,  1.54s/it]Training:   1%|          | 39/4439 [01:00<1:55:50,  1.58s/it]Training:   1%|          | 40/4439 [01:01<1:53:56,  1.55s/it]Training:   1%|          | 41/4439 [01:03<1:54:40,  1.56s/it]Training:   1%|          | 42/4439 [01:05<1:54:59,  1.57s/it]Training:   1%|          | 43/4439 [01:06<1:54:29,  1.56s/it]Training:   1%|          | 44/4439 [01:08<1:53:06,  1.54s/it]Training:   1%|          | 45/4439 [01:09<1:56:03,  1.58s/it]Training:   1%|          | 46/4439 [01:11<1:58:55,  1.62s/it]Training:   1%|          | 47/4439 [01:12<1:51:56,  1.53s/it]Training:   1%|          | 48/4439 [01:14<1:51:36,  1.53s/it]Training:   1%|          | 49/4439 [01:15<1:47:50,  1.47s/it]Training:   1%|          | 50/4439 [01:17<1:47:51,  1.47s/it]Training:   1%|          | 51/4439 [01:18<1:49:05,  1.49s/it]Training:   1%|          | 52/4439 [01:20<1:51:59,  1.53s/it]Training:   1%|          | 53/4439 [01:21<1:54:36,  1.57s/it]Training:   1%|          | 54/4439 [01:23<1:53:19,  1.55s/it]Training:   1%|          | 55/4439 [01:24<1:50:22,  1.51s/it]Training:   1%|▏         | 56/4439 [01:26<1:51:09,  1.52s/it]Training:   1%|▏         | 57/4439 [01:27<1:50:45,  1.52s/it]Training:   1%|▏         | 58/4439 [01:29<1:50:53,  1.52s/it]Training:   1%|▏         | 59/4439 [01:31<1:53:18,  1.55s/it]Training:   1%|▏         | 60/4439 [01:32<1:50:41,  1.52s/it]Training:   1%|▏         | 61/4439 [01:34<1:49:30,  1.50s/it]Training:   1%|▏         | 62/4439 [01:35<1:52:07,  1.54s/it]Training:   1%|▏         | 63/4439 [01:37<1:50:32,  1.52s/it]Training:   1%|▏         | 64/4439 [01:38<1:50:01,  1.51s/it]Training:   1%|▏         | 65/4439 [01:40<1:49:47,  1.51s/it]Training:   1%|▏         | 66/4439 [01:41<1:45:29,  1.45s/it]Training:   2%|▏         | 67/4439 [01:42<1:46:47,  1.47s/it]Training:   2%|▏         | 68/4439 [01:44<1:49:00,  1.50s/it]Training:   2%|▏         | 69/4439 [01:46<1:51:46,  1.53s/it]Training:   2%|▏         | 70/4439 [01:47<1:50:06,  1.51s/it]Training:   2%|▏         | 71/4439 [01:49<1:52:53,  1.55s/it]Training:   2%|▏         | 72/4439 [01:50<1:50:57,  1.52s/it]Training:   2%|▏         | 73/4439 [01:52<1:52:02,  1.54s/it]Training:   2%|▏         | 74/4439 [01:53<1:54:35,  1.58s/it]Training:   2%|▏         | 75/4439 [01:55<1:52:42,  1.55s/it]Training:   2%|▏         | 76/4439 [01:56<1:51:58,  1.54s/it]Training:   2%|▏         | 77/4439 [01:58<1:50:59,  1.53s/it]Training:   2%|▏         | 78/4439 [01:59<1:50:27,  1.52s/it]Training:   2%|▏         | 79/4439 [02:01<1:52:36,  1.55s/it]Training:   2%|▏         | 80/4439 [02:02<1:49:49,  1.51s/it]Training:   2%|▏         | 81/4439 [02:04<1:49:35,  1.51s/it]Training:   2%|▏         | 82/4439 [02:05<1:49:57,  1.51s/it]Training:   2%|▏         | 83/4439 [02:07<1:49:49,  1.51s/it]Training:   2%|▏         | 84/4439 [02:08<1:48:29,  1.49s/it]Training:   2%|▏         | 85/4439 [02:10<1:49:23,  1.51s/it]Training:   2%|▏         | 86/4439 [02:11<1:47:02,  1.48s/it]Training:   2%|▏         | 87/4439 [02:13<1:44:47,  1.44s/it]Training:   2%|▏         | 88/4439 [02:14<1:48:39,  1.50s/it]Training:   2%|▏         | 89/4439 [02:16<1:48:10,  1.49s/it]Training:   2%|▏         | 90/4439 [02:18<1:51:31,  1.54s/it]Training:   2%|▏         | 91/4439 [02:19<1:51:44,  1.54s/it]Training:   2%|▏         | 92/4439 [02:21<1:50:50,  1.53s/it]Training:   2%|▏         | 93/4439 [02:22<1:52:15,  1.55s/it]Training:   2%|▏         | 94/4439 [02:24<1:51:06,  1.53s/it]Training:   2%|▏         | 95/4439 [02:25<1:52:12,  1.55s/it]Training:   2%|▏         | 96/4439 [02:27<1:53:01,  1.56s/it]Training:   2%|▏         | 97/4439 [02:28<1:48:31,  1.50s/it]Training:   2%|▏         | 98/4439 [02:30<1:50:07,  1.52s/it]Training:   2%|▏         | 99/4439 [02:31<1:50:57,  1.53s/it]Training:   2%|▏         | 100/4439 [02:33<1:50:29,  1.53s/it]Training:   2%|▏         | 101/4439 [02:34<1:50:50,  1.53s/it]Training:   2%|▏         | 102/4439 [02:36<1:50:12,  1.52s/it]Training:   2%|▏         | 103/4439 [02:38<1:54:06,  1.58s/it]Training:   2%|▏         | 104/4439 [02:39<1:51:46,  1.55s/it]Training:   2%|▏         | 105/4439 [02:41<1:55:16,  1.60s/it]Training:   2%|▏         | 106/4439 [02:42<1:56:40,  1.62s/it]Training:   2%|▏         | 107/4439 [02:44<1:51:52,  1.55s/it]Training:   2%|▏         | 108/4439 [02:45<1:54:01,  1.58s/it]Training:   2%|▏         | 109/4439 [02:47<1:54:45,  1.59s/it]Training:   2%|▏         | 110/4439 [02:49<1:52:42,  1.56s/it]Training:   3%|▎         | 111/4439 [02:50<1:51:33,  1.55s/it]Training:   3%|▎         | 112/4439 [02:52<1:52:27,  1.56s/it]Training:   3%|▎         | 113/4439 [02:53<1:53:07,  1.57s/it]Training:   3%|▎         | 114/4439 [02:55<1:52:59,  1.57s/it]usage: full_pipeline.py [-h] --dataset {assist09,assist17,algebra05,statics}
+                        [--data_dir DATA_DIR] [--output_dir OUTPUT_DIR]
+                        [--device DEVICE] [--config CONFIG] [-p]
+                        [--batch_size BATCH_SIZE]
+                        [--test_batch_size TEST_BATCH_SIZE]
+                        [--d_model D_MODEL] [--n_heads N_HEADS]
+                        [--n_know N_KNOW] [--n_layers N_LAYERS]
+                        [--dropout DROPOUT] [--lambda_cl LAMBDA_CL] [--proj]
+                        [--hard_neg] [--window WINDOW]
+                        [--detector_d_model DETECTOR_D_MODEL]
+                        [--detector_n_heads DETECTOR_N_HEADS]
+                        [--detector_n_layers DETECTOR_N_LAYERS]
+                        [--detector_dropout DETECTOR_DROPOUT]
+                        [--window_size WINDOW_SIZE]
+                        [--anomaly_ratio ANOMALY_RATIO]
+                        [--optimize_for {f1_score,auc_roc,recall,precision}]
+                        [--kt_epochs KT_EPOCHS]
+                        [--detector_epochs DETECTOR_EPOCHS]
+                        [--learning_rate LEARNING_RATE]
+                        [--detector_lr DETECTOR_LR] [--patience PATIENCE]
+                        [--detector_patience DETECTOR_PATIENCE] [--use_cl]
+                        [--anomaly_weight ANOMALY_WEIGHT] [--skip_baseline]
+                        [--skip_detector] [--baseline_path BASELINE_PATH]
+                        [--detector_path DETECTOR_PATH]
+full_pipeline.py: error: unrecognized arguments: --use_aggressive_strategy
+✓ Baseline model found: output/baseline/model-048-0.7410.pt
+
+🚀 异常感知知识追踪训练流程（增强版）
+============================================================
+配置信息:
+  数据集: assist17
+  设备: cuda
+  输出目录: output/assist17_20250527_004636_enhanced
+  优化目标: recall
+  异常比例: 0.25
+  异常权重: 0.5
+
+📊 准备数据...
+  训练批次: 4439
+  验证批次: 1077
+  测试批次: 1077
+
+📌 使用已有基线模型: output/baseline/model-048-0.7410.pt
+
+============================================================
+PHASE 2: Training Anomaly Detector (Enhanced Version)
+============================================================
+🧠 模型参数: 732,865
+
+⚠️  使用激进训练策略！
+  - 动态异常比例: 50% → 20%
+  - 强制批次平衡
+  - 极端类别权重
+
+🔥 激进训练模式启动!
+  - 动态异常比例: 50% → 20%
+  - 强制批次平衡: True
+  - 极端类别权重: True
+Traceback (most recent call last):
+  File "/home/dev/DTransformer/anomaly_aware_kt/scripts/improved_anomaly_trainer.py", line 918, in <module>
+    main()
+  File "/home/dev/DTransformer/anomaly_aware_kt/scripts/improved_anomaly_trainer.py", line 886, in main
+    detector_path = train_anomaly_detector_enhanced(args, dataset_config, train_data, val_data)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dev/DTransformer/anomaly_aware_kt/scripts/improved_anomaly_trainer.py", line 476, in train_anomaly_detector_enhanced
+    detector_metrics = trainer.train_aggressive(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dev/DTransformer/anomaly_aware_kt/scripts/improved_anomaly_trainer.py", line 69, in train_aggressive
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: ReduceLROnPlateau.__init__() got an unexpected keyword argument 'verbose'

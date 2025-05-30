@@ -1,0 +1,11 @@
+# Core dependencies
+torch>=1.9.0
+numpy>=1.19.0
+scikit-learn>=0.24.0
+tqdm>=4.62.0
+matplotlib>=3.3.0
+pyyaml>=5.4.0
+tomlkit>=0.7.0
+
+# For DTransformer (should be installed separately)
+# git+https://github.com/yxonic/DTransformer.git

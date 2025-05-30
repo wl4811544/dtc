@@ -1,0 +1,50 @@
+# Example configuration for Anomaly-Aware Knowledge Tracing
+
+# Dataset configuration
+dataset: assist17
+data_dir: data
+with_pid: true
+
+# Data loading
+batch_size: 32
+test_batch_size: 64
+
+# Baseline DTransformer model
+d_model: 128
+n_heads: 8
+n_know: 16
+n_layers: 3
+dropout: 0.2
+lambda_cl: 0.1
+proj: true
+hard_neg: true
+window: 1
+
+# Anomaly detector model
+detector_d_model: 128
+detector_n_heads: 8
+detector_n_layers: 2
+detector_dropout: 0.1
+window_size: 10
+
+# Anomaly generation
+anomaly_ratio: 0.1  # 10% of sequences will have anomalies
+optimize_for: f1_score  # Options: f1_score, auc_roc, recall, precision
+
+# Training parameters
+kt_epochs: 100
+detector_epochs: 30
+learning_rate: 0.001
+detector_lr: 0.001
+patience: 10
+detector_patience: 10
+use_cl: true  # Use contrastive learning
+
+# Anomaly-aware model
+anomaly_weight: 0.5  # How much to reduce anomaly influence (0-1)
+
+# Device
+device: cuda  # or cpu
+
+# Output directory (optional, will auto-generate if not specified)
+# output_dir: output/experiment_1
