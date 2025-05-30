@@ -364,8 +364,10 @@ def main():
     # 控制参数
     parser.add_argument('--skip_baseline', action='store_true', help='Skip baseline training')
     parser.add_argument('--skip_detector', action='store_true', help='Skip detector training')
+    parser.add_argument('--skip_anomaly_training', action='store_true', help='Skip anomaly-aware model training')
     parser.add_argument('--baseline_path', help='Path to existing baseline model')
     parser.add_argument('--detector_path', help='Path to existing detector model')
+    parser.add_argument('--anomaly_path', help='Path to existing anomaly-aware model')
 
     # 训练策略参数
     parser.add_argument('--training_strategy', default='basic',
@@ -409,6 +411,19 @@ def main():
         else:
             print(f"✓ Detector model found: {args.detector_path}")
 
+    # 检查异常感知模型文件是否存在（如果指定了）
+    if args.skip_anomaly_training:
+        if not args.anomaly_path:
+            print("ERROR: --skip_anomaly_training requires --anomaly_path to be specified")
+            sys.exit(1)
+
+        if not os.path.exists(args.anomaly_path):
+            print(f"ERROR: Anomaly-aware model file not found: {args.anomaly_path}")
+            print(f"Please check the path or remove --skip_anomaly_training to train a new anomaly-aware model")
+            sys.exit(1)
+        else:
+            print(f"✓ Anomaly-aware model found: {args.anomaly_path}")
+
     # 设置输出目录
     if args.output_dir is None:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -445,7 +460,11 @@ def main():
         print(f"Using existing detector: {detector_path}")
 
     # 3. 训练异常感知模型
-    anomaly_path = train_anomaly_aware_model(args, dataset_config, train_data, val_data, detector_path)
+    if not args.skip_anomaly_training:
+        anomaly_path = train_anomaly_aware_model(args, dataset_config, train_data, val_data, detector_path)
+    else:
+        anomaly_path = args.anomaly_path
+        print(f"Using existing anomaly-aware model: {anomaly_path}")
 
     # 4. 评估结果
     results = evaluate_models(args, dataset_config, test_data, baseline_path, anomaly_path, detector_path)
