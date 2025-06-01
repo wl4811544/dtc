@@ -1,0 +1,36 @@
+# STATICS 基线训练配置
+# 针对小规模数据集的配置
+
+# ==================== 基本参数 ====================
+dataset: statics
+data_dir: data
+output_dir: null
+device: cuda
+with_pid: false  # statics没有问题ID
+
+# ==================== 数据加载参数 ====================
+batch_size: 8           # 小数据集用小batch
+test_batch_size: 16
+
+# ==================== 模型架构参数 ====================
+# 小模型避免过拟合
+d_model: 64             # 较小维度
+n_heads: 4              # 对应较少的头数
+n_know: 8               # 较少的知识概念数
+n_layers: 2             # 较少的层数
+dropout: 0.3            # 高dropout防止过拟合
+lambda_cl: 0.05         # 较小的对比学习权重
+proj: false             # 不使用投影层
+hard_neg: false         # 不使用困难负样本
+window: 1
+
+# ==================== 训练参数 ====================
+kt_epochs: 80           # 较少的训练轮数
+learning_rate: 0.001
+patience: 8             # 较小的耐心值
+use_cl: false           # 小数据集不建议使用对比学习
+
+# ==================== 实验记录 ====================
+experiment_name: "statics_baseline_v1"
+description: "STATICS数据集基线实验，小模型防过拟合"
+tags: ["baseline", "statics", "small_scale", "anti_overfit"]

@@ -12,12 +12,70 @@ import torch
 import tomlkit
 import yaml
 from datetime import datetime
+from typing import Dict, Any
 
 # 添加项目路径
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from DTransformer.data import KTData
 from anomaly_kt.stages.stage1_baseline import train_baseline_model
+
+
+def load_config(config_path: str) -> Dict[str, Any]:
+    """加载YAML配置文件"""
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"配置文件不存在: {config_path}")
+
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+
+    print(f"📄 已加载配置文件: {config_path}")
+    return config
+
+
+def merge_config_with_args(config: Dict[str, Any], args: argparse.Namespace) -> argparse.Namespace:
+    """
+    合并配置文件和命令行参数
+    命令行参数优先级更高（如果用户显式提供了参数）
+    """
+    # 获取parser的默认值（不解析参数，避免required参数错误）
+    parser = create_parser()
+
+    # 获取所有参数的默认值
+    defaults = {}
+    for action in parser._actions:
+        if action.dest != 'help':
+            defaults[action.dest] = action.default
+
+    # 创建新的args对象，从原args开始
+    merged_args = argparse.Namespace(**vars(args))
+
+    # 用配置文件中的值覆盖默认值（但不覆盖用户显式提供的命令行参数）
+    for key, value in config.items():
+        if hasattr(merged_args, key):  # 只设置脚本支持的参数
+            # 检查用户是否显式提供了这个参数
+            current_value = getattr(merged_args, key)
+            default_value = defaults.get(key)
+
+            # 如果当前值等于默认值，说明用户没有显式提供，使用配置文件的值
+            if current_value == default_value:
+                setattr(merged_args, key, value)
+            # 否则保持用户提供的命令行参数值
+
+    return merged_args
+
+
+def auto_detect_config(dataset: str) -> str:
+    """根据数据集自动检测配置文件"""
+    config_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'configs')
+    config_file = f"{dataset}_baseline.yaml"
+    config_path = os.path.join(config_dir, config_file)
+
+    if os.path.exists(config_path):
+        return config_path
+    else:
+        print(f"⚠️  未找到数据集 {dataset} 的默认配置文件: {config_path}")
+        return None
 
 
 def prepare_data(dataset_name: str, data_dir: str, batch_size: int, test_batch_size: int):
@@ -52,6 +110,12 @@ def prepare_data(dataset_name: str, data_dir: str, batch_size: int, test_batch_s
 def create_parser():
     """创建命令行参数解析器"""
     parser = argparse.ArgumentParser(description='Stage 1: Baseline Model Training')
+
+    # 配置文件参数
+    parser.add_argument('--config', type=str, default=None,
+                       help='配置文件路径 (YAML格式)')
+    parser.add_argument('--auto_config', action='store_true',
+                       help='根据数据集自动选择配置文件')
 
     # 基本参数
     parser.add_argument('--dataset', required=True,
@@ -96,6 +160,27 @@ def main():
     print("="*60)
     print("第一阶段：基线模型训练")
     print("="*60)
+
+    # 处理配置文件
+    config = {}
+    if args.config:
+        # 用户指定了配置文件
+        config = load_config(args.config)
+    elif args.auto_config:
+        # 自动检测配置文件
+        config_path = auto_detect_config(args.dataset)
+        if config_path:
+            config = load_config(config_path)
+        else:
+            print("🔧 使用默认参数（未找到配置文件）")
+    else:
+        print("🔧 使用命令行参数和默认值")
+
+    # 合并配置文件和命令行参数
+    if config:
+        print("🔄 合并配置文件和命令行参数...")
+        args = merge_config_with_args(config, args)
+        print("✅ 参数合并完成，命令行参数优先级更高")
 
     # 设置输出目录
     if args.output_dir is None:

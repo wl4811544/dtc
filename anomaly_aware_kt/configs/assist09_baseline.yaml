@@ -1,0 +1,35 @@
+# ASSIST09 基线训练配置
+# 针对中等规模数据集的配置
+
+# ==================== 基本参数 ====================
+dataset: assist09
+data_dir: data
+output_dir: null
+device: cuda
+with_pid: true  # assist09有问题ID
+
+# ==================== 数据加载参数 ====================
+batch_size: 16
+test_batch_size: 32
+
+# ==================== 模型架构参数 ====================
+d_model: 128
+n_heads: 8
+n_know: 16
+n_layers: 3
+dropout: 0.2
+lambda_cl: 0.1
+proj: true
+hard_neg: false
+window: 1
+
+# ==================== 训练参数 ====================
+kt_epochs: 100
+learning_rate: 0.001
+patience: 10
+use_cl: true
+
+# ==================== 实验记录 ====================
+experiment_name: "assist09_baseline_v1"
+description: "ASSIST09数据集基线实验"
+tags: ["baseline", "assist09", "medium_scale"]

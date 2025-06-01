@@ -1,0 +1,36 @@
+# ASSIST17 基线训练配置
+# 针对大规模数据集的保守起点设置
+
+# ==================== 基本参数 ====================
+dataset: assist17
+data_dir: data
+output_dir: null  # 如果为null，将自动生成时间戳目录
+device: cuda
+with_pid: true  # assist17有问题ID
+
+# ==================== 数据加载参数 ====================
+batch_size: 16          # 保守起点，避免内存问题
+test_batch_size: 32     # 测试时可以用更大batch
+
+# ==================== 模型架构参数 ====================
+# 保守的起点设置 - 可以稳定训练并观察效果
+d_model: 128            # 中等维度，平衡性能和效率
+n_heads: 8              # d_model的因子
+n_know: 16              # 知识概念数，可以后续调整
+n_layers: 3             # 3层Transformer
+dropout: 0.2            # 适中的dropout
+lambda_cl: 0.1          # 对比学习权重
+proj: true              # 使用投影层
+hard_neg: false         # 起点不用困难负样本
+window: 1               # 注意力窗口
+
+# ==================== 训练参数 ====================
+kt_epochs: 100          # 最大训练轮数
+learning_rate: 0.001    # 标准学习率
+patience: 10            # 早停耐心值
+use_cl: true            # 大数据集可以使用对比学习
+
+# ==================== 实验记录 ====================
+experiment_name: "assist17_baseline_v1"
+description: "ASSIST17数据集基线实验，保守参数设置"
+tags: ["baseline", "assist17", "conservative"]
