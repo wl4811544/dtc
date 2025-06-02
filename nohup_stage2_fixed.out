@@ -1,0 +1,79 @@
+nohup: ignoring input
+Traceback (most recent call last):
+  File "/home/dev/dtc/anomaly_aware_kt/scripts/run_stage2_curriculum.py", line 291, in main
+    model_path = train_curriculum_anomaly_detector(args, dataset_config, train_data, val_data)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dev/dtc/anomaly_aware_kt/anomaly_kt/stages/stage2_curriculum_anomaly.py", line 220, in train_curriculum_anomaly_detector
+    baseline_model = load_baseline_model(args.baseline_model_path, dataset_config, args)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dev/dtc/anomaly_aware_kt/anomaly_kt/stages/stage2_curriculum_anomaly.py", line 141, in load_baseline_model
+    checkpoint = torch.load(model_path, map_location=args.device)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/dev/dtc/.venv/lib/python3.12/site-packages/torch/serialization.py", line 1524, in load
+    raise pickle.UnpicklingError(_get_wo_message(str(e))) from None
+_pickle.UnpicklingError: Weights only load failed. This file can still be loaded, to do so you have two options, [1mdo those steps only if you trust the source of the checkpoint[0m. 
+	(1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+	(2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
+	WeightsUnpickler error: Unsupported global: GLOBAL numpy._core.multiarray.scalar was not an allowed global by default. Please use `torch.serialization.add_safe_globals([numpy._core.multiarray.scalar])` or the `torch.serialization.safe_globals([numpy._core.multiarray.scalar])` context manager to allowlist this global if you trust this class/function.
+
+Check the documentation of torch.load to learn more about types accepted by default with weights_only https://pytorch.org/docs/stable/generated/torch.load.html.
+============================================================
+第二阶段：课程学习异常检测训练
+============================================================
+✓ 基线模型文件存在: output/stage1_assist17_20250601_213029/baseline/best_model.pt
+📄 已加载配置文件: /home/dev/dtc/anomaly_aware_kt/configs/assist17_curriculum.yaml
+🔄 合并配置文件和命令行参数...
+✅ 参数合并完成，命令行参数优先级更高
+📁 输出目录: output/stage2_assist17_20250602_033514
+📄 配置已保存到: output/stage2_assist17_20250602_033514/config.yaml
+
+📊 准备数据...
+  数据集: assist17
+  问题数量: 102
+
+🔧 配置信息:
+  课程策略: hybrid
+  训练轮数: 100
+  异常比例: 0.1
+  基线异常比例: 0.05
+  检测器隐藏维度: 256
+  学习率: 0.001
+  设备: cuda
+✓ 第二阶段参数验证通过
+
+============================================================
+PHASE 2: Curriculum Learning Anomaly Detection Training
+============================================================
+
+📋 第二阶段参数配置:
+  基本参数:
+    设备: cuda
+    输出目录: output/stage2_assist17_20250602_033514
+    基线模型: output/stage1_assist17_20250601_213029/baseline/best_model.pt
+  课程学习参数:
+    调度策略: hybrid
+    训练轮数: 100
+    异常比例: 0.1
+    基线异常比例: 0.05
+    最大耐心值: 5
+  异常检测器参数:
+    隐藏层维度: 256
+    层数: 3
+    注意力头数: 16
+    Dropout: 0.2
+  训练参数:
+    学习率: 0.001
+    早停耐心: 10
+    难度评估: {'weights': {'temporal_weight': 0.3, 'statistical_weight': 0.3, 'cognitive_weight': 0.4, 'context_weight': 0.2}, 'params': {'history_window_size': 10, 'calibration_frequency': 100, 'min_samples_for_calibration': 50}}
+  数据集参数:
+    问题总数: 102
+    问题ID总数: 3162
+
+📥 加载基线模型: output/stage1_assist17_20250601_213029/baseline/best_model.pt
+
+❌ 训练失败: Weights only load failed. This file can still be loaded, to do so you have two options, [1mdo those steps only if you trust the source of the checkpoint[0m. 
+	(1) In PyTorch 2.6, we changed the default value of the `weights_only` argument in `torch.load` from `False` to `True`. Re-running `torch.load` with `weights_only` set to `False` will likely succeed, but it can result in arbitrary code execution. Do it only if you got the file from a trusted source.
+	(2) Alternatively, to load with `weights_only=True` please check the recommended steps in the following error message.
+	WeightsUnpickler error: Unsupported global: GLOBAL numpy._core.multiarray.scalar was not an allowed global by default. Please use `torch.serialization.add_safe_globals([numpy._core.multiarray.scalar])` or the `torch.serialization.safe_globals([numpy._core.multiarray.scalar])` context manager to allowlist this global if you trust this class/function.
+
+Check the documentation of torch.load to learn more about types accepted by default with weights_only https://pytorch.org/docs/stable/generated/torch.load.html.

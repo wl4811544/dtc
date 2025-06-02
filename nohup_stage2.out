@@ -1,0 +1,9 @@
+nohup: ignoring input
+Traceback (most recent call last):
+  File "/home/dev/dtc/anomaly_aware_kt/scripts/run_stage2_curriculum.py", line 22, in <module>
+    from anomaly_kt.stages.stage2_curriculum_anomaly import train_curriculum_anomaly_detector, test_curriculum_components
+  File "/home/dev/dtc/anomaly_aware_kt/anomaly_kt/stages/__init__.py", line 12, in <module>
+    from .stage2_curriculum_anomaly import train_curriculum_anomaly_detector, test_curriculum_components
+  File "/home/dev/dtc/anomaly_aware_kt/anomaly_kt/stages/stage2_curriculum_anomaly.py", line 24, in <module>
+    from anomaly_kt.trainer import EnhancedAnomalyTrainer
+ImportError: cannot import name 'EnhancedAnomalyTrainer' from 'anomaly_kt.trainer' (/home/dev/dtc/anomaly_aware_kt/anomaly_kt/trainer.py)

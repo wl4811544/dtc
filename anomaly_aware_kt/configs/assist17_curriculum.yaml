@@ -1,0 +1,287 @@
+# ASSIST17 课程学习配置文件
+# 基于我们的研究设计和ASSIST17数据集特征优化
+# 用于第二阶段：课程学习异常检测训练
+
+# 数据集信息
+dataset:
+  name: "assist17"
+  features: ["q", "s", "pid", "it", "at"]
+  has_temporal: true
+  has_pid: true
+  complexity_factor: 1.0
+  max_sequence_length: 200
+
+# 第二阶段特定参数
+stage2:
+  # 基线模型路径（需要用户指定）
+  baseline_model_path: null  # 必须通过命令行提供
+
+  # 异常检测器配置（与第一阶段基线模型保持一致）
+  detector:
+    hidden_dim: 256      # 对应第一阶段的d_model
+    num_layers: 3        # 对应第一阶段的n_layers
+    num_heads: 16        # 对应第一阶段的n_heads
+    dropout: 0.2         # 与第一阶段保持一致
+    window_size: 10
+
+  # 训练配置
+  training:
+    learning_rate: 0.001
+    patience: 10
+    difficulty_estimation: true
+
+# 课程学习配置
+curriculum:
+  strategy: "hybrid"  # performance_driven, time_driven, hybrid
+  total_epochs: 100
+  curriculum_epochs: 100  # 第二阶段训练轮数
+
+# 第二阶段参数映射（扁平化配置，便于命令行参数合并）
+# 与第一阶段基线模型保持完全一致的架构参数
+curriculum_strategy: "hybrid"
+curriculum_epochs: 100
+anomaly_ratio: 0.1
+baseline_ratio: 0.05
+max_patience: 5
+detector_hidden_dim: 256    # 与第一阶段d_model一致
+detector_num_layers: 3      # 与第一阶段n_layers一致
+detector_num_heads: 16      # 与第一阶段n_heads一致
+detector_dropout: 0.2       # 与第一阶段dropout一致
+detector_window_size: 10
+learning_rate: 0.001        # 与第一阶段learning_rate一致
+patience: 10
+difficulty_estimation: true
+
+# 4阶段课程设计（基于ASSIST17的充足数据量）
+phases:
+  phase_1:
+    difficulty_levels: [1]
+    level_weights: {1: 1.0}
+    target_metrics:
+      recall: 0.90
+      precision: 0.80
+      f1: 0.85
+    min_epochs: 5
+    max_epochs: 15
+    advancement_threshold: 0.85
+    focus: "building_confidence"
+    description: "简单异常，建立检测信心"
+
+  phase_2:
+    difficulty_levels: [1, 2]
+    level_weights: {1: 0.7, 2: 0.3}
+    target_metrics:
+      recall: 0.85
+      precision: 0.75
+      f1: 0.80
+    min_epochs: 8
+    max_epochs: 20
+    advancement_threshold: 0.80
+    focus: "gradual_complexity"
+    description: "引入中等难度异常"
+
+  phase_3:
+    difficulty_levels: [1, 2, 3]
+    level_weights: {1: 0.3, 2: 0.5, 3: 0.2}
+    target_metrics:
+      recall: 0.75
+      precision: 0.70
+      f1: 0.72
+    min_epochs: 10
+    max_epochs: 25
+    advancement_threshold: 0.75
+    focus: "advanced_patterns"
+    description: "复杂异常模式学习"
+
+  phase_4:
+    difficulty_levels: [1, 2, 3, 4]
+    level_weights: {1: 0.2, 2: 0.3, 3: 0.3, 4: 0.2}
+    target_metrics:
+      recall: 0.65
+      precision: 0.65
+      f1: 0.65
+    min_epochs: 15
+    max_epochs: 40
+    advancement_threshold: 0.70
+    focus: "expert_level"
+    description: "最高难度异常检测"
+
+# 异常生成配置
+anomaly_generation:
+  total_anomaly_ratio: 0.1  # 总异常比例
+  baseline_anomaly_ratio: 0.05  # 基线异常比例
+  anomaly_ratio: 0.1  # 第二阶段参数映射
+  baseline_ratio: 0.05  # 第二阶段参数映射
+  
+  # 基线异常策略
+  baseline_strategies:
+    - name: "random_flip"
+      weight: 0.6
+      params:
+        flip_probability: 0.5
+        context_aware: false
+        min_anomaly_length: 3
+    - name: "uniform_random"
+      weight: 0.2
+      params:
+        min_length: 3
+        max_length: 8
+    - name: "gaussian_noise"
+      weight: 0.2
+      params:
+        noise_std: 0.3
+  
+  # 课程异常策略配置
+  curriculum_strategies:
+    level_1:  # 简单异常
+      strategies:
+        - name: "obvious_consecutive"
+          weight: 0.7
+          params:
+            min_length: 5
+            max_length: 8
+            error_probability: 1.0
+        - name: "simple_random"
+          weight: 0.3
+          params:
+            min_length: 3
+            max_length: 6
+      expected_recall: 0.95
+      
+    level_2:  # 中等异常
+      strategies:
+        - name: "pattern_anomaly"
+          weight: 0.6
+          params:
+            pattern_types: ["ABAB", "ABC"]
+            repetitions: [3, 4]
+        - name: "burst_errors"
+          weight: 0.4
+          params:
+            n_bursts: [2, 3]
+            burst_size: [2, 4]
+      expected_recall: 0.85
+      
+    level_3:  # 困难异常
+      strategies:
+        - name: "ability_mismatch"
+          weight: 0.7
+          params:
+            transition_sharpness: [0.6, 0.8]
+            performance_gap: [0.3, 0.5]
+        - name: "subtle_temporal"
+          weight: 0.3
+          params:
+            interval_irregularity: 7
+            change_probability: 0.6
+      expected_recall: 0.75
+      
+    level_4:  # 极难异常
+      strategies:
+        - name: "advanced_masking"
+          weight: 0.6
+          params:
+            masking_ratio: 0.125  # 1/8 位置
+            subtlety_factor: 0.7
+        - name: "intelligent_deception"
+          weight: 0.4
+          params:
+            learning_curve_realism: 0.8
+            anomaly_interval: 11
+            deception_probability: 0.4
+      expected_recall: 0.65
+
+# 难度评估配置
+difficulty_estimation:
+  # 多维度权重（针对ASSIST17优化）
+  weights:
+    temporal_weight: 0.3      # 时序复杂度
+    statistical_weight: 0.3   # 统计复杂度
+    cognitive_weight: 0.4     # 认知复杂度
+    context_weight: 0.2       # 上下文复杂度
+  
+  # 评估参数
+  params:
+    history_window_size: 10
+    calibration_frequency: 100  # 每100个样本校准一次
+    min_samples_for_calibration: 50
+
+# 调度器配置
+scheduler:
+  # 性能驱动参数
+  performance_driven:
+    max_patience: 5
+    improvement_threshold: 0.01
+    regression_threshold: 0.02
+  
+  # 时间驱动参数
+  time_driven:
+    advancement_ratio: 0.8  # 80%时间后推进
+  
+  # 混合策略参数
+  hybrid:
+    performance_weight: 0.7
+    time_weight: 0.3
+    min_phase_ratio: 1.5  # 最小阶段时间为min_epochs的1.5倍
+
+# 训练配置
+training:
+  # 基本参数
+  batch_size: 16
+  learning_rate: 0.001
+  weight_decay: 1e-5
+  
+  # 早停配置
+  early_stopping:
+    patience: 10
+    min_delta: 0.001
+    monitor: "val_auc"
+  
+  # 模型保存
+  model_saving:
+    save_best: true
+    save_frequency: 10  # 每10轮保存一次
+    save_last: true
+
+# 评估配置
+evaluation:
+  metrics: ["auc", "f1", "precision", "recall", "accuracy"]
+  
+  # 课程学习特定评估
+  curriculum_metrics:
+    - "phase_transition_smoothness"
+    - "difficulty_progression_correlation"
+    - "baseline_vs_curriculum_performance"
+  
+  # 验证频率
+  validation_frequency: 1  # 每轮验证
+
+# 输出配置
+output:
+  log_level: "INFO"
+  save_predictions: true
+  save_difficulty_scores: true
+  save_phase_transitions: true
+  
+  # 可视化
+  visualization:
+    plot_training_curves: true
+    plot_phase_transitions: true
+    plot_difficulty_distribution: true
+
+# 实验配置
+experiment:
+  name: "assist17_curriculum_baseline"
+  description: "ASSIST17数据集上的课程学习异常检测基线实验"
+  tags: ["curriculum_learning", "anomaly_detection", "assist17"]
+  
+  # 可重复性
+  reproducibility:
+    seed: 42
+    deterministic: true
+    
+  # 资源配置
+  resources:
+    device: "auto"  # auto, cpu, cuda
+    num_workers: 4
+    pin_memory: true

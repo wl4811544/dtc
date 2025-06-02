@@ -119,6 +119,23 @@ Then run with:
 python anomaly_aware_kt/scripts/full_pipeline.py --config config/experiment.yaml
 ```
 
+## 📚 Documentation
+
+### Core Documentation
+- **[异常分类器设计原理详解](docs/anomaly_classifier_design_principles.md)** - 异常分类器的设计原理和与基线模型的关系
+- **[因果关系设计决策](docs/causality_debate_and_design_decisions.md)** - 深入讨论因果关系的学术辩论与技术选择
+- **[完整系统指南](docs/complete_guide.md)** - 系统使用的详细指南
+- **[课程学习研究设计](docs/curriculum_learning_research_design.md)** - 课程学习的理论基础
+- **[第一阶段参数说明](docs/stage1_parameters.md)** - 基线模型的参数配置
+- **[第四阶段评估指南](docs/stage4_evaluation_guide.md)** - 系统评估方法
+
+### Quick Links
+- 🚀 [快速开始](#quick-start) - 立即开始使用
+- 🧠 [异常分类器原理](docs/anomaly_classifier_design_principles.md) - 理解核心设计
+- 🤔 [因果关系讨论](docs/causality_debate_and_design_decisions.md) - 深入理解设计决策
+- 🎓 [课程学习策略](docs/curriculum_learning_research_design.md) - 了解训练策略
+- 🔧 [故障排除](#troubleshooting) - 解决常见问题
+
 ## Key Concepts
 
 ### Anomaly Generation Strategies
@@ -206,12 +223,40 @@ This project extends DTransformer and follows its license terms.
 - Based on the DTransformer implementation
 - Inspired by anomaly detection research in educational data mining
 
+---
 
+## 🚀 Example Commands
 
-python anomaly_aware_kt/scripts/full_pipeline.py --dataset assist17 --skip_baseline --baseline_path output/baseline/model-048-0.7410.pt --device cuda --with_pid --use_cl --proj --n_know 32 --batch_size 16 --test_batch_size 32
+### Basic Training
+```bash
+python anomaly_aware_kt/scripts/full_pipeline.py \
+    --dataset assist17 \
+    --skip_baseline \
+    --baseline_path output/baseline/model-048-0.7410.pt \
+    --device cuda --with_pid --use_cl --proj \
+    --n_know 32 --batch_size 16 --test_batch_size 32
+```
 
-python anomaly_aware_kt/scripts/full_pipeline.py --dataset assist17 --skip_baseline --baseline_path output/baseline/model-048-0.7410.pt --anomaly_ratio 0.25 --optimize_for recall --detector_epochs 20 --detector_lr 0.0005
+### Enhanced Training with Optimized Parameters
+```bash
+python anomaly_aware_kt/scripts/full_pipeline.py \
+    --dataset assist17 \
+    --skip_baseline \
+    --baseline_path output/baseline/model-048-0.7410.pt \
+    --device cuda --with_pid --use_cl --proj \
+    --n_know 32 --batch_size 16 --test_batch_size 32 \
+    --anomaly_ratio 0.25 --optimize_for recall --detector_lr 0.0005
+```
 
-python anomaly_aware_kt/scripts/full_pipeline.py --dataset assist17 --skip_baseline --baseline_path output/baseline/model-048-0.7410.pt --device cuda --with_pid --use_cl --proj --n_know 32 --batch_size 16 --test_batch_size 32 --anomaly_ratio 0.25 --optimize_for recall --detector_lr 0.0005
-
-python anomaly_aware_kt/scripts/full_pipeline.py --dataset assist17 --skip_baseline --baseline_path output/baseline/model-048-0.7410.pt --skip_detector --detector_path output/assist17_20250524_135317/detector/best_model.pt --device cuda --with_pid --use_cl --proj --n_know 32 --batch_size 16 --test_batch_size 32 --anomaly_weight 0.5
+### Using Pre-trained Detector
+```bash
+python anomaly_aware_kt/scripts/full_pipeline.py \
+    --dataset assist17 \
+    --skip_baseline \
+    --baseline_path output/baseline/model-048-0.7410.pt \
+    --skip_detector \
+    --detector_path output/detector/best_model.pt \
+    --device cuda --with_pid --use_cl --proj \
+    --n_know 32 --batch_size 16 --test_batch_size 32 \
+    --anomaly_weight 0.5
+```

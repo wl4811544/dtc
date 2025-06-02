@@ -1,0 +1,36 @@
+# ASSIST17 基线训练配置
+# 与您原始训练配置完全一致
+
+# ==================== 基本参数 ====================
+dataset: assist17
+data_dir: data
+output_dir: null  # 如果为null，将自动生成时间戳目录
+device: cuda
+with_pid: true  # assist17有问题ID
+
+# ==================== 数据加载参数 ====================
+batch_size: 16          # 与原始配置一致
+test_batch_size: 32     # 与原始配置一致
+
+# ==================== 模型架构参数 ====================
+# 基础模型配置 (d_model=128, n_heads=8)
+d_model: 128            # 基础模型维度
+n_heads: 8              # 基础模型注意力头数
+n_know: 16              # 知识概念数
+n_layers: 3             # Transformer层数
+dropout: 0.2            # Dropout率
+lambda_cl: 0.1          # 对比学习权重
+proj: true              # 使用投影层
+hard_neg: false         # 不使用困难负样本
+window: 1               # 注意力窗口大小
+
+# ==================== 训练参数 ====================
+kt_epochs: 100          # 最大训练轮数
+learning_rate: 0.001    # 学习率
+patience: 10            # 早停耐心值
+use_cl: true            # 使用对比学习
+
+# ==================== 实验记录 ====================
+experiment_name: "assist17_baseline_v1"
+description: "ASSIST17数据集基线实验，保守参数设置"
+tags: ["baseline", "assist17", "conservative"]

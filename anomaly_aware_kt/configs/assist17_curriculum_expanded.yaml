@@ -1,0 +1,133 @@
+# ASSIST17 课程学习配置文件 - 扩展版本
+# 基于扩展模型配置 (d_model=256, n_heads=16)
+# 用于第二阶段：课程学习异常检测训练
+
+# 数据集信息
+dataset:
+  name: "assist17"
+  features: ["q", "s", "pid", "it", "at"]
+  has_temporal: true
+  has_pid: true
+  complexity_factor: 1.0
+  max_sequence_length: 200
+
+# 第二阶段特定参数 - 扩展配置
+stage2:
+  # 基线模型路径（需要用户指定扩展模型）
+  baseline_model_path: null  # 必须通过命令行提供
+  
+  # 异常检测器配置 - 基于256维特征
+  detector:
+    hidden_dim: 512          # 扩展：256 -> 512
+    num_layers: 4            # 扩展：3 -> 4
+    dropout: 0.3
+    window_size: 10
+  
+  # 训练配置
+  training:
+    learning_rate: 5e-5      # 扩展模型用更小的学习率
+    patience: 15             # 更大的耐心值
+    difficulty_estimation: true
+
+# 课程学习配置
+curriculum:
+  strategy: "hybrid"
+  total_epochs: 120          # 扩展模型需要更多轮数
+  curriculum_epochs: 120
+
+# 第二阶段参数映射（扁平化配置）- 扩展版本
+curriculum_strategy: "hybrid"
+curriculum_epochs: 120
+anomaly_ratio: 0.1
+baseline_ratio: 0.05
+max_patience: 8              # 扩展：5 -> 8
+detector_hidden_dim: 512     # 扩展：256 -> 512
+detector_num_layers: 4       # 扩展：3 -> 4
+detector_dropout: 0.3
+detector_window_size: 10
+learning_rate: 5e-5          # 扩展模型学习率
+patience: 15                 # 扩展：10 -> 15
+difficulty_estimation: true
+
+# 4阶段课程设计（扩展模型优化）
+phases:
+  phase_1:
+    difficulty_levels: [1]
+    level_weights: {1: 1.0}
+    target_metrics:
+      recall: 0.92           # 扩展模型期望更高性能
+      precision: 0.85
+      f1: 0.88
+    min_epochs: 8            # 扩展：5 -> 8
+    max_epochs: 20           # 扩展：15 -> 20
+    advancement_threshold: 0.88
+    focus: "building_confidence"
+    
+  phase_2:
+    difficulty_levels: [1, 2]
+    level_weights: {1: 0.7, 2: 0.3}
+    target_metrics:
+      recall: 0.88
+      precision: 0.80
+      f1: 0.84
+    min_epochs: 12           # 扩展：8 -> 12
+    max_epochs: 25           # 扩展：20 -> 25
+    advancement_threshold: 0.84
+    focus: "gradual_complexity"
+    
+  phase_3:
+    difficulty_levels: [1, 2, 3]
+    level_weights: {1: 0.3, 2: 0.5, 3: 0.2}
+    target_metrics:
+      recall: 0.80
+      precision: 0.75
+      f1: 0.77
+    min_epochs: 15           # 扩展：10 -> 15
+    max_epochs: 30           # 扩展：25 -> 30
+    advancement_threshold: 0.78
+    focus: "advanced_patterns"
+    
+  phase_4:
+    difficulty_levels: [1, 2, 3, 4]
+    level_weights: {1: 0.2, 2: 0.3, 3: 0.3, 4: 0.2}
+    target_metrics:
+      recall: 0.70
+      precision: 0.70
+      f1: 0.70
+    min_epochs: 20           # 扩展：15 -> 20
+    max_epochs: 50           # 扩展：40 -> 50
+    advancement_threshold: 0.72
+    focus: "expert_level"
+
+# 异常生成配置（与基础版本相同）
+anomaly_generation:
+  total_anomaly_ratio: 0.1
+  baseline_anomaly_ratio: 0.05
+  anomaly_ratio: 0.1
+  baseline_ratio: 0.05
+
+# 训练配置 - 扩展版本
+training:
+  batch_size: 12             # 扩展：16 -> 12 (内存考虑)
+  learning_rate: 5e-5        # 更小的学习率
+  weight_decay: 1e-5
+  
+  early_stopping:
+    patience: 15             # 更大的耐心值
+    min_delta: 0.0005        # 更小的改善阈值
+    monitor: "val_auc"
+
+# 实验配置 - 扩展版本
+experiment:
+  name: "assist17_curriculum_expanded"
+  description: "ASSIST17数据集上的课程学习异常检测扩展实验 (256维模型)"
+  tags: ["curriculum_learning", "anomaly_detection", "assist17", "expanded"]
+  
+  reproducibility:
+    seed: 42
+    deterministic: true
+    
+  resources:
+    device: "auto"
+    num_workers: 4
+    pin_memory: true

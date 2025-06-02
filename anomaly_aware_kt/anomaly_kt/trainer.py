@@ -66,7 +66,7 @@ class BaseTrainer:
 
     def load_checkpoint(self, path: str, optimizer: Optional = None):
         """加载检查点"""
-        checkpoint = torch.load(path, map_location=self.device)
+        checkpoint = torch.load(path, map_location=self.device, weights_only=False)
         self.model.load_state_dict(checkpoint['model_state_dict'])
 
         if optimizer is not None:

@@ -9,7 +9,10 @@ This module contains the individual stages of the training pipeline:
 """
 
 from .stage1_baseline import train_baseline_model
+from .stage2_curriculum_anomaly import train_curriculum_anomaly_detector, test_curriculum_components
 
 __all__ = [
-    'train_baseline_model'
+    'train_baseline_model',
+    'train_curriculum_anomaly_detector',
+    'test_curriculum_components'
 ]
