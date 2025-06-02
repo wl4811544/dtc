@@ -108,12 +108,12 @@ class DifficultyEstimator:
         # 准确率（使用0.5阈值）
         pred_binary = (pred_np > 0.5).astype(int)
         accuracy = (pred_binary == labels_np).mean()
-        
+
         # 精确率和召回率
         tp = ((pred_binary == 1) & (labels_np == 1)).sum()
         fp = ((pred_binary == 1) & (labels_np == 0)).sum()
         fn = ((pred_binary == 0) & (labels_np == 1)).sum()
-        
+
         precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
         recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
         f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
@@ -178,21 +178,28 @@ class DifficultyEstimator:
         anomaly_pred = pred_np[anomaly_mask]
         anomaly_diff = diff_np[anomaly_mask]
         
-        # 计算相关性 - 安全处理标准差为0的情况
-        if len(anomaly_pred) > 1:
-            # 检查标准差是否为0
-            if np.std(anomaly_pred) == 0 or np.std(anomaly_diff) == 0:
-                correlation = 0.0  # 如果任一变量标准差为0，相关性设为0
+        # 计算相关性 - 正确处理标准差为0的情况
+        if len(anomaly_pred) <= 1:
+            correlation = 0.0
+        else:
+            # 检查数据的变异性
+            pred_std = np.std(anomaly_pred)
+            diff_std = np.std(anomaly_diff)
+
+            if pred_std == 0 and diff_std == 0:
+                # 两个变量都没有变异 - 完全相关
+                correlation = 1.0
+            elif pred_std == 0 or diff_std == 0:
+                # 其中一个变量没有变异 - 无法计算相关性
+                correlation = 0.0
             else:
+                # 正常计算相关性
                 try:
                     correlation = np.corrcoef(anomaly_pred, anomaly_diff)[0, 1]
-                    # 处理NaN值
                     if np.isnan(correlation):
                         correlation = 0.0
                 except:
                     correlation = 0.0
-        else:
-            correlation = 0.0
         
         # 难度分层分析
         difficulty_levels = self._analyze_by_difficulty_levels(anomaly_pred, anomaly_diff)

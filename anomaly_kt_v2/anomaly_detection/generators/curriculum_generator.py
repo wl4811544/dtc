@@ -265,8 +265,12 @@ class CurriculumAnomalyGenerator:
                     anomaly_labels[0, pos] = 1
                 change_rate = min(0.5, change_rate + 0.02)  # 逐渐增加
         
-        # Level 3 难度分数: 0.5-0.7
-        difficulty_scores = anomaly_labels * random.uniform(0.5, 0.7)
+        # Level 3 难度分数: 0.5-0.7 (为每个异常位置生成不同分数)
+        difficulty_scores = torch.zeros_like(anomaly_labels, dtype=torch.float)
+        anomaly_positions = torch.where(anomaly_labels > 0)
+        for i in range(len(anomaly_positions[0])):
+            row, col = anomaly_positions[0][i], anomaly_positions[1][i]
+            difficulty_scores[row, col] = random.uniform(0.5, 0.7)
         
         return s_anomaly, anomaly_labels, difficulty_scores
     
