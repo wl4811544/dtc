@@ -15,19 +15,38 @@
 
 ```
 anomaly_kt_v2/
-├── __init__.py                 # 项目初始化
-├── configs/                    # 配置文件
-│   ├── __init__.py            # 配置管理模块
-│   └── assist17_baseline.yaml # ASSIST17基线配置
-├── core/                      # 核心模块
-│   ├── __init__.py           # 核心模块导出
-│   └── common.py             # 通用工具函数
-├── stages/                   # 训练阶段
-│   ├── __init__.py          # 阶段模块导出
-│   └── stage1_baseline.py   # 第一阶段：基线训练
-└── scripts/                 # 训练脚本
-    ├── __init__.py         # 脚本模块
-    └── run_stage1_baseline.py # 第一阶段训练脚本
+├── __init__.py                         # 项目初始化
+├── configs/                            # 配置文件
+│   ├── __init__.py                    # 配置管理模块
+│   ├── assist17_baseline.yaml        # ASSIST17基线配置
+│   └── assist17_stage2.yaml          # ASSIST17第二阶段配置
+├── core/                              # 核心模块
+│   ├── __init__.py                   # 核心模块导出
+│   └── common.py                     # 通用工具函数
+├── anomaly_detection/                 # 异常检测核心模块
+│   ├── __init__.py                   # 异常检测模块导出
+│   ├── detector.py                   # 因果异常检测器
+│   ├── evaluator.py                  # 异常检测评估器
+│   ├── generators/                   # 异常生成器
+│   │   ├── __init__.py              # 生成器模块导出
+│   │   ├── baseline_generator.py    # 基线异常生成器
+│   │   └── curriculum_generator.py  # 课程学习异常生成器
+│   └── curriculum/                   # 课程学习组件
+│       ├── __init__.py              # 课程学习模块导出
+│       ├── scheduler.py             # 课程调度器
+│       ├── trainer.py               # 课程学习训练器
+│       └── difficulty_estimator.py  # 难度评估器
+├── stages/                           # 训练阶段
+│   ├── __init__.py                  # 阶段模块导出
+│   ├── stage1_baseline.py           # 第一阶段：基线训练
+│   └── stage2_anomaly_classifier.py # 第二阶段：异常分类器训练
+├── scripts/                         # 训练脚本
+│   ├── __init__.py                 # 脚本模块
+│   ├── run_stage1_baseline.py      # 第一阶段训练脚本
+│   └── run_stage2_anomaly_classifier.py # 第二阶段训练脚本
+└── tests/                          # 测试模块
+    ├── __init__.py                # 测试模块
+    └── test_stage1.py             # 第一阶段功能测试
 ```
 
 ## 🚀 快速开始
@@ -44,7 +63,7 @@ anomaly_kt_v2/
 # 安装基础依赖
 pip install torch torchvision torchaudio
 pip install numpy pandas scikit-learn
-pip install pyyaml tomlkit tqdm
+pip install pyyaml tomlkit tqdm matplotlib seaborn
 
 # 确保DTransformer项目在同级目录
 ```
@@ -98,6 +117,46 @@ python scripts/run_stage1_baseline.py \
     --n_layers 3 \
     --kt_epochs 100 \
     --learning_rate 0.001 \
+    --device cuda
+```
+
+### 第二阶段：异常分类器训练
+
+#### 基础模型的异常分类器
+
+```bash
+# 使用第一阶段基础模型训练异常分类器
+python scripts/run_stage2_anomaly_classifier.py \
+    --dataset assist17 \
+    --model_type basic \
+    --baseline_model_path output/stage1_basic_assist17_*/baseline/best_model.pt \
+    --auto_config \
+    --device cuda
+```
+
+#### 扩展模型的异常分类器
+
+```bash
+# 使用第一阶段扩展模型训练异常分类器
+python scripts/run_stage2_anomaly_classifier.py \
+    --dataset assist17 \
+    --model_type extended \
+    --baseline_model_path output/stage1_extended_assist17_*/baseline/best_model.pt \
+    --auto_config \
+    --device cuda
+```
+
+#### 自定义课程学习配置
+
+```bash
+python scripts/run_stage2_anomaly_classifier.py \
+    --dataset assist17 \
+    --model_type basic \
+    --baseline_model_path output/stage1_basic_assist17_*/baseline/best_model.pt \
+    --anomaly_epochs 50 \
+    --curriculum_type linear \
+    --initial_difficulty 0.1 \
+    --final_difficulty 0.8 \
     --device cuda
 ```
 

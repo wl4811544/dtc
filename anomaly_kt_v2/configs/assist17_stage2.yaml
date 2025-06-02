@@ -1,0 +1,90 @@
+# ASSIST17 第二阶段配置：异常分类器训练
+# 基于课程学习的异常检测器训练配置
+
+# ==================== 基本参数 ====================
+dataset: assist17
+data_dir: data
+output_dir: null  # 如果为null，将自动生成时间戳目录
+device: cuda
+with_pid: true  # assist17有问题ID
+
+# ==================== 数据加载参数 ====================
+batch_size: 16          # 与第一阶段保持一致
+test_batch_size: 32     # 与第一阶段保持一致
+
+# ==================== 异常检测器参数 ====================
+# 注意：d_model和n_heads将从基线模型自动继承
+d_model: 128            # 基础模型维度（将被基线模型覆盖）
+n_heads: 8              # 基础模型注意力头数（将被基线模型覆盖）
+n_layers: 2             # 异常检测器层数（比基线模型少）
+dropout: 0.1            # 异常检测器Dropout（比基线模型小）
+window_size: 10         # 统计特征窗口大小
+
+# ==================== 课程学习参数 ====================
+anomaly_epochs: 50      # 异常检测器训练轮数
+learning_rate: 0.001    # 学习率
+patience: 10            # 早停耐心值
+curriculum_type: linear # 课程调度类型 (linear, exponential, cosine, step)
+initial_difficulty: 0.1 # 初始难度
+final_difficulty: 0.8   # 最终难度
+warmup_epochs: 5        # 预热轮数
+
+# ==================== 实验记录 ====================
+experiment_name: "assist17_stage2_anomaly_classifier"
+description: "ASSIST17数据集异常分类器训练，基于课程学习"
+tags: ["stage2", "anomaly_classifier", "curriculum_learning", "assist17"]
+
+# ==================== 课程学习详细配置 ====================
+curriculum_config:
+  # 难度级别配置
+  difficulty_levels: [1, 2, 3, 4]
+  
+  # 各阶段权重分布
+  phase_weights:
+    warmup:   {1: 1.0, 2: 0.0, 3: 0.0, 4: 0.0}  # 预热：只有简单异常
+    early:    {1: 0.7, 2: 0.3, 3: 0.0, 4: 0.0}  # 早期：简单为主
+    middle:   {1: 0.3, 2: 0.5, 3: 0.2, 4: 0.0}  # 中期：中等为主
+    advanced: {1: 0.1, 2: 0.3, 3: 0.4, 4: 0.2}  # 后期：困难为主
+  
+  # 异常比例配置
+  anomaly_ratio:
+    min: 0.05   # 最小异常比例
+    max: 0.2    # 最大异常比例
+  
+  # 基线异常配置
+  baseline_anomaly:
+    enabled: true
+    ratio: 0.3  # 基线异常占总异常的比例
+    strategies: ["random_flip", "uniform_random"]
+
+# ==================== 评估配置 ====================
+evaluation_config:
+  # 评估策略
+  test_strategies: 
+    - "random_flip"
+    - "uniform_random" 
+    - "systematic_bias"
+    - "gaussian_noise"
+  
+  # 评估阈值
+  thresholds: [0.3, 0.5, 0.7]
+  
+  # 报告配置
+  generate_plots: true
+  save_predictions: true
+
+# ==================== 预期性能 ====================
+expected_performance:
+  target_auc: "0.75-0.85"
+  baseline_strategies:
+    random_flip: "0.80+"
+    uniform_random: "0.85+"
+    systematic_bias: "0.70+"
+  training_time: "20-30分钟"
+
+# ==================== 注意事项 ====================
+notes:
+  - "异常检测器的d_model和n_heads会自动从基线模型继承"
+  - "确保基线模型路径正确且可访问"
+  - "课程学习会逐步增加异常检测难度"
+  - "建议先在基础模型上验证，再尝试扩展模型"

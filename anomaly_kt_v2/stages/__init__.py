@@ -9,7 +9,9 @@
 """
 
 from .stage1_baseline import train_baseline_model
+from .stage2_anomaly_classifier import train_anomaly_classifier
 
 __all__ = [
-    'train_baseline_model'
+    'train_baseline_model',
+    'train_anomaly_classifier'
 ]
