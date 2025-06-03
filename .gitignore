@@ -51,7 +51,7 @@ coverage.xml
 *.pot
 
 # Django stuff:
-*.log
+
 local_settings.py
 db.sqlite3
 
@@ -111,4 +111,3 @@ venv.bak/
 
 # User Definition
 .DS_Store
-output/

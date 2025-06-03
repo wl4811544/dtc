@@ -1,0 +1,41 @@
+anomaly_ratio: 0.1
+auto_config: true
+baseline_model_path: output/stage1_assist17_20250601_213029/baseline/best_model.pt
+baseline_ratio: 0.05
+batch_size: 16
+config: null
+curriculum_epochs: 100
+curriculum_strategy: hybrid
+d_model: 128
+data_dir: data
+dataset: assist17
+detector_dropout: 0.2
+detector_hidden_dim: 256
+detector_num_layers: 3
+detector_window_size: 10
+device: cuda
+difficulty_estimation:
+  params:
+    calibration_frequency: 100
+    history_window_size: 10
+    min_samples_for_calibration: 50
+  weights:
+    cognitive_weight: 0.4
+    context_weight: 0.2
+    statistical_weight: 0.3
+    temporal_weight: 0.3
+dropout: 0.2
+dry_run: false
+hard_neg: false
+lambda_cl: 0.1
+learning_rate: 0.001
+max_patience: 5
+n_heads: 8
+n_know: 16
+n_layers: 3
+output_dir: output/stage2_assist17_20250602_033239
+patience: 10
+proj: false
+test_batch_size: 32
+window: 1
+with_pid: false

@@ -1,0 +1,6 @@
+{
+  "epochs": 100,
+  "learning_rate": 0.001,
+  "use_cl": true,
+  "anomaly_weight": 0
+}
