@@ -10,8 +10,10 @@
 
 from .stage1_baseline import train_baseline_model
 from .stage2_anomaly_classifier import train_anomaly_classifier
+from .stage3_anomaly_aware_kt import train_anomaly_aware_kt
 
 __all__ = [
     'train_baseline_model',
-    'train_anomaly_classifier'
+    'train_anomaly_classifier',
+    'train_anomaly_aware_kt'
 ]

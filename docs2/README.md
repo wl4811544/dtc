@@ -19,7 +19,8 @@ anomaly_kt_v2/
 ├── configs/                            # 配置文件
 │   ├── __init__.py                    # 配置管理模块
 │   ├── assist17_baseline.yaml        # ASSIST17基线配置
-│   └── assist17_stage2.yaml          # ASSIST17第二阶段配置
+│   ├── assist17_stage2.yaml          # ASSIST17第二阶段配置
+│   └── assist17_stage3.yaml          # ASSIST17第三阶段配置
 ├── core/                              # 核心模块
 │   ├── __init__.py                   # 核心模块导出
 │   └── common.py                     # 通用工具函数
@@ -36,14 +37,21 @@ anomaly_kt_v2/
 │       ├── scheduler.py             # 课程调度器
 │       ├── trainer.py               # 课程学习训练器
 │       └── difficulty_estimator.py  # 难度评估器
+├── anomaly_aware/                     # 异常感知知识追踪模块
+│   ├── __init__.py                   # 异常感知模块导出
+│   ├── fusion.py                     # 异常感知融合策略
+│   ├── model.py                      # 异常感知知识追踪模型
+│   └── trainer.py                    # 异常感知训练器
 ├── stages/                           # 训练阶段
 │   ├── __init__.py                  # 阶段模块导出
 │   ├── stage1_baseline.py           # 第一阶段：基线训练
-│   └── stage2_anomaly_classifier.py # 第二阶段：异常分类器训练
+│   ├── stage2_anomaly_classifier.py # 第二阶段：异常分类器训练
+│   └── stage3_anomaly_aware_kt.py   # 第三阶段：异常感知知识追踪
 ├── scripts/                         # 训练脚本
 │   ├── __init__.py                 # 脚本模块
 │   ├── run_stage1_baseline.py      # 第一阶段训练脚本
-│   └── run_stage2_anomaly_classifier.py # 第二阶段训练脚本
+│   ├── run_stage2_anomaly_classifier.py # 第二阶段训练脚本
+│   └── run_stage3_anomaly_aware_kt.py # 第三阶段训练脚本
 └── tests/                          # 测试模块
     ├── __init__.py                # 测试模块
     └── test_stage1.py             # 第一阶段功能测试
@@ -146,19 +154,57 @@ python scripts/run_stage2_anomaly_classifier.py \
     --device cuda
 ```
 
-#### 自定义课程学习配置
+### 第三阶段：异常感知知识追踪
+
+#### 基础模型的异常感知知识追踪
 
 ```bash
-python scripts/run_stage2_anomaly_classifier.py \
+# 融合基线模型和异常检测器，实现异常感知知识追踪
+python scripts/run_stage3_anomaly_aware_kt.py \
     --dataset assist17 \
     --model_type basic \
     --baseline_model_path output/stage1_basic_assist17_*/baseline/best_model.pt \
-    --anomaly_epochs 50 \
-    --curriculum_type linear \
-    --initial_difficulty 0.1 \
-    --final_difficulty 0.8 \
+    --anomaly_detector_path output/stage2_basic_assist17_*/anomaly_classifier/best_anomaly_detector.pt \
+    --auto_config \
     --device cuda
 ```
+
+#### 扩展模型的异常感知知识追踪
+
+```bash
+# 扩展模型的异常感知知识追踪
+python scripts/run_stage3_anomaly_aware_kt.py \
+    --dataset assist17 \
+    --model_type extended \
+    --baseline_model_path output/stage1_extended_assist17_*/baseline/best_model.pt \
+    --anomaly_detector_path output/stage2_extended_assist17_*/anomaly_classifier/best_anomaly_detector.pt \
+    --auto_config \
+    --device cuda
+```
+
+#### 自定义融合配置
+
+```bash
+python scripts/run_stage3_anomaly_aware_kt.py \
+    --dataset assist17 \
+    --model_type basic \
+    --baseline_model_path "..." \
+    --anomaly_detector_path "..." \
+    --fusion_type attention \
+    --enable_context_enhancement \
+    --fusion_epochs 15 \
+    --joint_epochs 25 \
+    --finetune_epochs 15 \
+    --device cuda
+```
+
+## 📚 详细文档
+
+- [项目总览](project_overview.md) - 项目整体架构和目标
+- [第一阶段指南](stage1_baseline_training.md) - 基线模型训练详细说明
+- [第二阶段指南](stage2_anomaly_classifier_training.md) - 异常分类器训练详细说明
+- [第三阶段指南](stage3_anomaly_aware_kt_training.md) - 异常感知知识追踪详细说明
+- [配置系统指南](configuration_guide.md) - 配置文件使用说明
 
 ## 🔄 模型类型对比
 

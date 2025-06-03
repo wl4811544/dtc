@@ -1,0 +1,125 @@
+# ASSIST17 第三阶段配置：异常感知知识追踪
+# 将基线模型和异常检测器融合，目标提升AUC 0.05-0.1
+
+# ==================== 基本参数 ====================
+dataset: assist17
+data_dir: data
+output_dir: null  # 如果为null，将自动生成时间戳目录
+device: cuda
+with_pid: true  # assist17有问题ID
+
+# ==================== 数据加载参数 ====================
+batch_size: 16          # 与前两阶段保持一致
+test_batch_size: 32     # 与前两阶段保持一致
+
+# ==================== 融合策略参数 ====================
+fusion_type: attention              # 融合类型: attention, gating, weighted
+enable_context_enhancement: true    # 启用上下文增强
+freeze_pretrained: true            # 冻结预训练模型
+lambda_anomaly: 0.1                # 异常一致性损失权重
+
+# ==================== 渐进式训练参数 ====================
+# 阶段1: 只训练融合层
+fusion_epochs: 10       # 融合层训练轮数
+fusion_lr: 0.001       # 融合层学习率
+
+# 阶段2: 联合训练（解冻异常检测器）
+joint_epochs: 20       # 联合训练轮数
+joint_lr: 0.0005      # 联合训练学习率
+
+# 阶段3: 端到端微调（解冻所有模型）
+finetune_epochs: 10    # 端到端微调轮数
+finetune_lr: 0.0001   # 端到端微调学习率
+
+# 通用训练参数
+learning_rate: 0.001   # 初始学习率
+patience: 10           # 早停耐心值
+
+# ==================== 性能目标 ====================
+performance_targets:
+  target_auc_improvement: 0.05      # 目标AUC提升
+  stretch_auc_improvement: 0.1      # 理想AUC提升
+  baseline_auc_threshold: 0.74      # 基线AUC阈值
+
+# ==================== 融合策略详细配置 ====================
+fusion_config:
+  # 异常权重调整
+  anomaly_weight_adjuster:
+    discount_factor: 0.7            # 异常折扣因子
+    min_weight: 0.1                 # 最小权重
+    adjustment_type: linear         # 调整类型: linear, exponential, sigmoid
+  
+  # 注意力融合
+  attention_fusion:
+    num_heads: 8                    # 注意力头数
+    dropout: 0.1                    # Dropout率
+  
+  # 上下文增强
+  context_enhancement:
+    context_window: 5               # 上下文窗口大小
+    enhancement_heads: 4            # 增强注意力头数
+
+# ==================== 实验记录 ====================
+experiment_name: "assist17_stage3_anomaly_aware_kt"
+description: "ASSIST17数据集异常感知知识追踪，目标AUC提升0.05-0.1"
+tags: ["stage3", "anomaly_aware", "knowledge_tracing", "fusion", "assist17"]
+
+# ==================== 预期性能分解 ====================
+expected_contributions:
+  anomaly_weight_adjustment: "+0.02-0.04 AUC"
+  context_enhancement: "+0.03-0.05 AUC"
+  multi_task_learning: "+0.01-0.02 AUC"
+  progressive_training: "+0.01-0.02 AUC"
+  total_expected: "+0.07-0.13 AUC"
+
+# ==================== 评估配置 ====================
+evaluation_config:
+  # 对比基线
+  baselines:
+    - "original_dtransformer"
+    - "stage1_baseline"
+  
+  # 消融研究
+  ablation_studies:
+    - "no_anomaly_adjustment"
+    - "no_context_enhancement"
+    - "no_multi_task"
+    - "different_fusion_types"
+  
+  # 评估指标
+  metrics:
+    - "auc"
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1"
+
+# ==================== 优化策略 ====================
+optimization_strategies:
+  # 如果性能不达标的调优方案
+  fallback_configs:
+    # 方案1: 增强融合
+    enhanced_fusion:
+      fusion_type: gating
+      lambda_anomaly: 0.2
+      context_window: 7
+    
+    # 方案2: 延长训练
+    extended_training:
+      fusion_epochs: 15
+      joint_epochs: 30
+      finetune_epochs: 15
+    
+    # 方案3: 调整学习率
+    lr_tuning:
+      learning_rate: 0.0005
+      joint_lr: 0.0002
+      finetune_lr: 0.00005
+
+# ==================== 注意事项 ====================
+notes:
+  - "确保基线模型和异常检测器路径正确"
+  - "渐进式训练策略：融合层 -> 联合训练 -> 端到端微调"
+  - "目标是相对于基线模型提升AUC 0.05-0.1"
+  - "如果第一次运行效果不佳，可尝试fallback_configs中的配置"
+  - "建议先在基础模型上验证，再尝试扩展模型"
